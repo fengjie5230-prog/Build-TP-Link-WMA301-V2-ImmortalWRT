@@ -7,6 +7,8 @@ on:
       - '*.md'
       - 'LICENSE'
   workflow_dispatch:
+permissions:
+  contents: write
 
 env:
   CONFIG_FILE: .config
@@ -50,6 +52,24 @@ jobs:
     - name: Load custom config
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE immortalwrt/.config
+        
+    - name: Fix EEE and change LAN IP
+      run: |
+        cd immortalwrt
+        mkdir -p files/etc/uci-defaults
+        cat > files/etc/uci-defaults/99-fix-network << 'OFFEOF'
+        #!/bin/sh
+        for dev in /sys/class/net/*; do
+          n=$(basename "$dev")
+          case "$n" in
+            eth*|lan*|wan*|switch*) ethtool --set-eee "$n" eee off 2>/dev/null ;;
+          esac
+        done
+        uci set network.lan.ipaddr='192.168.2.1'
+        uci commit network
+        exit 0
+        OFFEOF
+        chmod +x files/etc/uci-defaults/99-fix-network
 
     - name: Update feeds
       run: |
