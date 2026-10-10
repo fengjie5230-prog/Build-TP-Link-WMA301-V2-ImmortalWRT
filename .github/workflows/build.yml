@@ -92,8 +92,6 @@ jobs:
         cat >> .config << 'CFGEOF'
         CONFIG_PACKAGE_luci-app-passwall=y
         CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y
-        CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=y
-        CONFIG_PACKAGE_xray-core=y
         CFGEOF
         make defconfig
         echo "=== PassWall symbols in final .config ==="
