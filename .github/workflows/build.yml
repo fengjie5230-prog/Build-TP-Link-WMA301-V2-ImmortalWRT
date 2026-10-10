@@ -65,7 +65,7 @@ jobs:
             eth*|lan*|wan*|switch*) ethtool --set-eee "$n" eee off 2>/dev/null ;;
           esac
         done
-        uci set network.lan.ipaddr='192.168.2.1'
+        uci set network.lan.ipaddr='192.168.100.1'
         uci commit network
         exit 0
         OFFEOF
@@ -76,6 +76,8 @@ jobs:
         cd immortalwrt
         sed -i 's/https:\/\/git.openwrt.org/https:\/\/github.com\/openwrt/g' feeds.conf.default
         sed -i 's/https:\/\/git.openwrt.org\/project/https:\/\/github.com\/openwrt/g' feeds.conf.default
+        echo "src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages" >> feeds.conf.default
+        echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall" >> feeds.conf.default
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
@@ -166,3 +168,4 @@ jobs:
         make_latest: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
